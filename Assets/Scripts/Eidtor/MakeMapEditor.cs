@@ -11,11 +11,15 @@ public class MakeMapEditor : Editor
 {
     private SerializedProperty _row;
     private SerializedProperty _colmn;
+    private SerializedProperty _bGImg;
+    private SerializedProperty _tempImg;
 
     private void OnEnable()
     {
         _row = serializedObject.FindProperty("i_row");
         _colmn = serializedObject.FindProperty("i_column");
+        _bGImg = serializedObject.FindProperty("s_BGImg");
+        _tempImg = serializedObject.FindProperty("s_tempImg");
     }
 
     bool _makeMapList = false;
@@ -29,22 +33,10 @@ public class MakeMapEditor : Editor
             SetToggleBtn();
         }
 
-        _showMapList = EditorGUILayout.Foldout(_makeMapList, "ShowMap");
-        if (_makeMapList)
+        _showMapList = EditorGUILayout.Foldout(_showMapList, "ShowMap");
+        if (_showMapList)
         {
-            MakeMap map = (target as MakeMap);
-            for (int i = 0; i < map.CheckMakeMap.Count; i++)
-            {
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                for (int j = 0; j < map.CheckMakeMap[0].Count; j++)
-                {
-                    EditorGUILayout.LabelField(map.CheckMakeMap[i][j] ? "■" : "□", GUILayout.Width(10));
-                }
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
-            }
-
+            AddMap();
         }
     }
 
@@ -157,6 +149,64 @@ public class MakeMapEditor : Editor
         }
     }
 
+
+
+    #endregion
+
+    #region 맵 만들기
+
+    private int TextrueValue = 0;
+
+    private void AddMap()
+    {
+        MakeMap map = (target as MakeMap);
+        if (map.CheckMakeMap.Count <= 0)
+        {
+            ShowError();
+            return;
+        }
+
+        //만들어진 맵을 보여주기
+        for (int i = 0; i < map.CheckMakeMap.Count; i++)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            for (int j = 0; j < map.CheckMakeMap[0].Count; j++)
+            {
+                EditorGUILayout.LabelField(map.CheckMakeMap[i][j] ? "■" : "□", GUILayout.Width(10));
+            }
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+        }
+
+        EditorGUILayout.PropertyField(_bGImg, true); // 임시 뒷배경
+
+        EditorGUILayout.PropertyField(_tempImg, true); // 임시 버튼 위치
+
+        serializedObject.ApplyModifiedProperties();
+
+        if (GUILayout.Button("MakeMapImg"))
+        {
+            if (_bGImg != null && _tempImg != null)
+            {
+                
+            }
+        }
+    }
+
+    private void ShowError()
+    {
+        GUILayout.Space(10);
+        GUIStyle CenterAllign = new GUIStyle();
+        CenterAllign.alignment = TextAnchor.MiddleCenter;
+        CenterAllign.normal.textColor = Color.red;
+        CenterAllign.fontSize = 20;
+        GUILayout.Label("저장된 맵이 없습니다. 확인바랍니다.", CenterAllign);
+    }
+
+    #endregion
+
+    #region Utill
     List<List<T>> DeepCopy<T>(List<List<T>> original)
     {
         List<List<T>> copy = new List<List<T>>();
@@ -170,7 +220,13 @@ public class MakeMapEditor : Editor
         return copy;
     }
 
+    Texture2D LoadTexture(string path)
+    {
+        byte[] fileData = System.IO.File.ReadAllBytes(path);
+        Texture2D texture = new Texture2D(2, 2);
+        texture.LoadImage(fileData); // 자동으로 이미지 크기 등을 설정합니다.
+        return texture;
+    }
+
     #endregion
-
-
 }

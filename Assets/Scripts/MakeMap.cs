@@ -15,6 +15,12 @@ public class MakeMap : MonoBehaviour
     [SerializeField]
     private int i_column = 0;
 
+    [SerializeField]
+    private Sprite s_BGImg;
+
+    [SerializeField]
+    private Sprite s_tempImg;
+
     public void InitValue()
     {
         i_row = 0;
