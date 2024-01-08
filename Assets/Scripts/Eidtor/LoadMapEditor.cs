@@ -1,12 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UI;
 using System.IO;
 
 public class LoadMapEditor : EditorWindow
 {
-    public Sprite S_BGImg;
-    public Sprite S_ButtonImg;
+    public Image S_bgImg;
+    public Sprite S_buttonImg;
+    public int I_bgWidth;
+    public int I_bgHeight;
+    public int I_buttonSize;
+    public float f_buttonSpace;
 
     //맵 불러올 변수
     private List<string> dataList = new List<string>();
@@ -51,6 +56,11 @@ public class LoadMapEditor : EditorWindow
                     int mapNum = int.Parse(dataList[dataNum]);
                     var JsonValue = JsonUtility.FromJson<MapClass>(File.ReadAllText(mapFileDirList[mapNum]));
                     checkMakeMap = ReadFile(JsonValue);
+                    S_bgImg = null;
+                    S_buttonImg = null;
+                    I_bgWidth = 0;
+                    I_bgHeight = 0;
+                    I_buttonSize = 0;
                 }
             }
             return;
@@ -73,23 +83,42 @@ public class LoadMapEditor : EditorWindow
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("배경 이미지", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
-        S_BGImg = (Sprite)EditorGUILayout.ObjectField(S_BGImg, typeof(Sprite), true);
+        S_bgImg = (Image)EditorGUILayout.ObjectField(S_bgImg, typeof(Image), true);
         GUILayout.EndHorizontal();
 
-        GUILayout.Space(20);
+        GUILayout.Space(5);
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("버튼 이미지", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
-        S_ButtonImg = (Sprite)EditorGUILayout.ObjectField(S_ButtonImg, typeof(Sprite), true);
+        S_buttonImg = (Sprite)EditorGUILayout.ObjectField(S_buttonImg, typeof(Sprite), true);
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(5);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("버튼 크기", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
+        I_buttonSize = EditorGUILayout.IntField(I_buttonSize);
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("버튼 사이 거리", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
+        f_buttonSpace = EditorGUILayout.FloatField(f_buttonSpace);
         GUILayout.EndHorizontal();
 
         GUILayout.Space(20);
 
         if (GUILayout.Button("MakeMapImg"))
         {
-            if (S_BGImg != null && S_ButtonImg != null)
+            if (S_bgImg != null && S_buttonImg != null && I_buttonSize != 0)
             {
+                Vector2 BGSize = S_bgImg.rectTransform.sizeDelta;
+                I_bgHeight = (int)BGSize.y;
+                I_bgWidth = (int)BGSize.x;
 
+                // 이미지의 사이즈를 가져온다
+
+                // 버튼 크기에 따라 가운데부터 채운다(이때 빈공간 거리를 재야함)
+                // f_buttonSpace,I_buttonSize 사용
             }
         }
     }
