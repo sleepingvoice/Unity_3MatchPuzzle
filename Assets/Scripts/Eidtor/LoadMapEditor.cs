@@ -6,8 +6,10 @@ using System.IO;
 
 public class LoadMapEditor : EditorWindow
 {
-    public Image S_bgImg;
+    public Image O_bgImg;
+    public Object O_PrefabImg;
     public Sprite S_buttonImg;
+
     public int I_bgWidth;
     public int I_bgHeight;
     public int I_buttonSize;
@@ -56,11 +58,16 @@ public class LoadMapEditor : EditorWindow
                     int mapNum = int.Parse(dataList[dataNum]);
                     var JsonValue = JsonUtility.FromJson<MapClass>(File.ReadAllText(mapFileDirList[mapNum]));
                     checkMakeMap = ReadFile(JsonValue);
-                    S_bgImg = null;
+                    
+                    //초기화 작업
+                    O_bgImg = null;
+                    O_PrefabImg = null;
                     S_buttonImg = null;
                     I_bgWidth = 0;
                     I_bgHeight = 0;
                     I_buttonSize = 0;
+                    f_buttonSpace = 0;
+
                 }
             }
             return;
@@ -83,7 +90,7 @@ public class LoadMapEditor : EditorWindow
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("배경 이미지", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
-        S_bgImg = (Image)EditorGUILayout.ObjectField(S_bgImg, typeof(Image), true);
+        O_bgImg = (Image)EditorGUILayout.ObjectField(O_bgImg, typeof(Image), true);
         GUILayout.EndHorizontal();
 
         GUILayout.Space(5);
@@ -93,34 +100,58 @@ public class LoadMapEditor : EditorWindow
         S_buttonImg = (Sprite)EditorGUILayout.ObjectField(S_buttonImg, typeof(Sprite), true);
         GUILayout.EndHorizontal();
 
-        GUILayout.Space(5);
+        GUILayout.Space(10);
 
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("버튼 크기", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
-        I_buttonSize = EditorGUILayout.IntField(I_buttonSize);
-        GUILayout.EndHorizontal();
 
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("버튼 사이 거리", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
-        f_buttonSpace = EditorGUILayout.FloatField(f_buttonSpace);
-        GUILayout.EndHorizontal();
 
         GUILayout.Space(20);
 
-        if (GUILayout.Button("MakeMapImg"))
+        Vector2 ImageSize = Vector2.zero;
+
+        if (O_bgImg != null && S_buttonImg != null)
         {
-            if (S_bgImg != null && S_buttonImg != null && I_buttonSize != 0)
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("버튼 크기", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
+            I_buttonSize = EditorGUILayout.IntField(I_buttonSize);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("버튼 사이 거리", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
+            f_buttonSpace = EditorGUILayout.FloatField(f_buttonSpace);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("버튼 프리펩", GUILayout.Width(EditorGUIUtility.labelWidth - 50));
+            O_PrefabImg = EditorGUILayout.ObjectField(O_PrefabImg, typeof(GameObject), true);
+            GUILayout.EndHorizontal();
+
+
+            if (O_PrefabImg == null || I_buttonSize == 0 || f_buttonSpace == 0)
+                return;
+
+            if (GUILayout.Button("MakeMapImg"))
             {
-                Vector2 BGSize = S_bgImg.rectTransform.sizeDelta;
+                Vector2 BGSize = O_bgImg.rectTransform.sizeDelta;
                 I_bgHeight = (int)BGSize.y;
                 I_bgWidth = (int)BGSize.x;
 
                 // 이미지의 사이즈를 가져온다
 
+                ImageSize = O_bgImg.rectTransform.sizeDelta;
+
+                GameObject tempObj = (GameObject)Instantiate(O_PrefabImg, O_bgImg.transform);
+                tempObj.GetComponent<RectTransform>().anchoredPosition = Vector2.zero; // 가운데 지점에 생성
+
                 // 버튼 크기에 따라 가운데부터 채운다(이때 빈공간 거리를 재야함)
-                // f_buttonSpace,I_buttonSize 사용
+                // 가운데 지점을 기준으로 계산
             }
         }
+
+       
     }
 
     /// <summary>

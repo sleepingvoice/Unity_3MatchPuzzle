@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 
 public class MapSave : EditorWindow
@@ -85,14 +85,14 @@ public class MapSave : EditorWindow
             if (GUILayout.Button("MakeMapJson"))
             {
                 MapClass tempClass = new MapClass();
-   
+
                 tempClass.BoolList = ChangeToListbool(DeepCopy(_newBoolList));
 
                 string[] jsonFiles = Directory.GetFiles(Application.dataPath + "/MapData", "*.json");
                 tempClass.MapNumber = jsonFiles.Length + 1;
 
                 string s = JsonUtility.ToJson(tempClass);
-                File.WriteAllText(Application.dataPath + "/MapData/Map_" + (tempClass.MapNumber).ToString("D2") + ".json", s );
+                File.WriteAllText(Application.dataPath + "/MapData/Map_" + (tempClass.MapNumber).ToString("D2") + ".json", s);
             }
         }
     }
@@ -153,12 +153,12 @@ public class MapSave : EditorWindow
     public List<JsonList> ChangeToListbool(List<List<bool>> ChangeList)
     {
         List<JsonList> tempList = new List<JsonList>();
-        
+
 
         foreach (var boolList in ChangeList)
         {
             JsonList tempJson = new JsonList();
-            
+
             List<int> intList = new List<int>();
 
             foreach (var value in boolList)

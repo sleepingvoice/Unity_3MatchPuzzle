@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
-using System.IO;
 
 namespace Capture
 {
     public class zzTransparencyCapture
     {
-        public static Texture2D capture(Rect pRect,Camera TargetCam)
+        public static Texture2D capture(Rect pRect, Camera TargetCam)
         {
             Camera lCamera = TargetCam;
             Texture2D lOut;

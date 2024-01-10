@@ -1,7 +1,7 @@
 using Capture;
 using System.Collections;
-using UnityEngine;
 using System.IO;
+using UnityEngine;
 
 public class CaptureCam : MonoBehaviour
 {
