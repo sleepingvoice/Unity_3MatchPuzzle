@@ -143,9 +143,28 @@ public class LoadMapEditor : EditorWindow
 
                 ImageSize = O_bgImg.rectTransform.sizeDelta;
 
-                GameObject tempObj = (GameObject)Instantiate(O_PrefabImg, O_bgImg.transform);
-                tempObj.GetComponent<RectTransform>().anchoredPosition = Vector2.zero; // 가운데 지점에 생성
+                int ButtonTrans = I_buttonSize + (int)f_buttonSpace;
 
+                GameObject tempObj = Instantiate(new GameObject(), O_bgImg.transform);
+                tempObj.AddComponent<RectTransform>();
+                tempObj.GetComponent<RectTransform>().anchoredPosition = Vector2.zero; // 가운데 지점에 생성
+                Vector2 ButtonValue = new Vector2(checkMakeMap[0].Count - 1, checkMakeMap.Count - 1);
+                tempObj.GetComponent<RectTransform>().sizeDelta = new Vector2(ButtonTrans * ButtonValue.x + I_buttonSize, ButtonTrans * ButtonValue.y + I_buttonSize);
+
+                for (int i = 0; i < checkMakeMap.Count; i++)
+                {
+                    for (int j = 0; j < checkMakeMap[0].Count; j++)
+                    {
+                        if (checkMakeMap[i][j])
+                        {
+                            GameObject ButtonObj = (GameObject)Instantiate(O_PrefabImg, tempObj.transform);
+                            ButtonObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(ButtonTrans * j, -ButtonTrans * i);
+                            ButtonObj.GetComponent<RectTransform>().sizeDelta = new Vector2(I_buttonSize, I_buttonSize);
+                            ButtonObj.GetComponent<Image>().sprite = S_buttonImg;
+                        }
+                        //checkmap에 있는 값으로 버튼을 만듬
+                    }
+                }
                 // 버튼 크기에 따라 가운데부터 채운다(이때 빈공간 거리를 재야함)
                 // 가운데 지점을 기준으로 계산
             }
@@ -181,7 +200,7 @@ public class LoadMapEditor : EditorWindow
 
     private void ShowError()
     {
-        GUILayout.Space(10);
+        GUILayout.Space(10); 
         GUIStyle CenterAllign = new GUIStyle();
         CenterAllign.alignment = TextAnchor.MiddleCenter;
         CenterAllign.normal.textColor = Color.red;
